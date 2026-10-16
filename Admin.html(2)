@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#0B192C] text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Basura Mo, Points Mo (BMPM) - Admin Research Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bmpmNavy: '#0B192C',
+            bmpmCard: '#1E3E62',
+            bmpmDarkCard: '#000814',
+            bmpmGold: '#D4AF37',
+            bmpmGoldBright: '#F39C12',
+            bmpmGoldHover: '#B8962E',
+            bmpmAccent: '#10B981'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['Georgia', 'serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap');
+    body { font-family: 'Inter', sans-serif; background-color: #0B192C; }
+    .font-serif-heading { font-family: 'Playfair Display', Georgia, serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #1E3E62; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 4px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-100 antialiased selection:bg-[#D4AF37] selection:text-[#0B192C]">
+
+  <!-- PASSCODE GATE MODAL -->
+  <div id="auth-modal" class="fixed inset-0 z-50 bg-[#0B192C]/95 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-[#1E3E62] border border-[#D4AF37]/40 rounded-3xl p-8 max-w-md w-full shadow-2xl space-y-6 text-center">
+      <div class="w-16 h-16 bg-[#0B192C] rounded-full border-2 border-[#D4AF37] flex items-center justify-center mx-auto text-[#D4AF37] shadow-lg">
+        <i data-lucide="shield-check" class="w-8 h-8"></i>
+      </div>
+      <div class="space-y-2">
+        <h2 class="text-2xl font-bold font-serif-heading text-white">Admin Authentication</h2>
+        <p class="text-xs text-slate-300">Enter permanent admin passcode to access research monitoring dashboard.</p>
+      </div>
+      <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+        <input type="password" id="passcodeInput" required placeholder="Enter passcode (admin123)" class="w-full bg-[#0B192C] border border-slate-700 rounded-xl px-4 py-3 text-sm text-center text-white tracking-widest focus:outline-none focus:border-[#D4AF37]">
+        <button type="submit" class="w-full py-3.5 rounded-xl bg-[#D4AF37] hover:bg-[#B8962E] text-[#0B192C] font-extrabold text-sm shadow-xl transition-all">
+          Access Admin Dashboard
+        </button>
+      </form>
+      <p id="auth-error" class="text-xs text-rose-400 font-semibold hidden">Incorrect passcode. Default is: admin123</p>
+    </div>
+  </div>
+
+  <!-- HEADER WITH ONLY ONE LOGO (BMPM CIRCULAR LOGO) -->
+  <header class="sticky top-0 z-40 bg-[#0B192C]/95 backdrop-blur border-b border-[#D4AF37]/25 shadow-2xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row items-center justify-between gap-4">
+      
+      <!-- SINGLE LOGO & BRANDING -->
+      <div class="flex items-center space-x-3.5 text-center md:text-left">
+        <div class="relative w-12 h-12 flex-shrink-0 bg-[#1E3E62] rounded-full p-1 border-2 border-[#D4AF37] shadow-lg shadow-[#D4AF37]/10">
+          <svg viewBox="0 0 200 200" class="w-full h-full">
+            <circle cx="100" cy="100" r="92" fill="#0B192C" stroke="#D4AF37" stroke-width="8"/>
+            <circle cx="100" cy="100" r="76" fill="none" stroke="#10B981" stroke-width="5" stroke-dasharray="10 5"/>
+            <path d="M55,105 C55,75 80,55 110,55 C135,55 155,70 155,95 C155,115 135,125 115,125 M55,105 L55,145 M55,105 C55,125 75,145 100,145 C125,145 145,125 145,105" stroke="#F39C12" stroke-width="12" fill="none" stroke-linecap="round"/>
+            <polygon points="120,45 140,55 120,65" fill="#F39C12"/>
+            <text x="100" y="102" font-family="Arial, sans-serif" font-weight="900" font-size="28" fill="#FFFFFF" text-anchor="middle">BMPM</text>
+          </svg>
+        </div>
+
+        <div>
+          <h1 class="text-base sm:text-lg font-extrabold tracking-tight text-white font-serif-heading">
+            BASURA MO, POINTS MO <span class="text-[#D4AF37] font-sans text-sm sm:text-base">(BMPM)</span>
+          </h1>
+          <p class="text-xs text-[#D4AF37]/90 font-medium">
+            Gabaldon Vocational Agriculture High School • <span class="text-slate-300">Senior High School Students Researcher</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- ADMIN ACTIONS -->
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold">
+          <i data-lucide="shield" class="w-3.5 h-3.5"></i> Admin Mode Active
+        </span>
+        <button onclick="handleAdminLogout()" class="px-4 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/40 text-rose-300 text-xs font-bold transition-all flex items-center gap-1.5">
+          <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Logout
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- Notification Toast -->
+    <div id="toast" class="hidden fixed top-20 right-4 z-50 max-w-md bg-[#D4AF37] text-[#0B192C] px-5 py-3.5 rounded-xl shadow-2xl flex items-center gap-3 font-bold text-sm border-2 border-white animate-bounce">
+      <i data-lucide="check-circle" class="w-5 h-5 flex-shrink-0"></i>
+      <span id="toast-message">Action processed successfully!</span>
+    </div>
+
+    <!-- IMAGE LIGHTBOX MODAL -->
+    <div id="imageModal" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4" onclick="closeImageModal()">
+      <div class="relative max-w-3xl w-full max-h-[90vh] bg-[#1E3E62] border border-[#D4AF37]/50 rounded-2xl p-4 flex flex-col items-center shadow-2xl" onclick="event.stopPropagation()">
+        <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white bg-slate-800 hover:bg-slate-700 p-2 rounded-full border border-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+        <h3 id="modalStudentTitle" class="text-lg font-bold text-white mb-3">Student Proof Preview</h3>
+        <div class="overflow-auto max-h-[70vh] rounded-xl border border-slate-700 bg-black/50 p-2 w-full flex justify-center">
+          <img id="modalImage" src="" class="max-w-full h-auto rounded-lg object-contain">
+        </div>
+      </div>
+    </div>
+
+    <!-- ANALYTICS CARDS -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="bg-[#1E3E62] border border-slate-700/80 rounded-2xl p-5 space-y-2 shadow-xl">
+        <div class="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">Total Submissions</div>
+        <div id="statTotal" class="text-3xl font-extrabold text-white">0</div>
+        <div class="text-[11px] text-slate-300">All student entries received</div>
+      </div>
+
+      <div class="bg-[#1E3E62] border border-slate-700/80 rounded-2xl p-5 space-y-2 shadow-xl">
+        <div class="text-xs font-bold text-amber-400 uppercase tracking-wider">Pending Review</div>
+        <div id="statPending" class="text-3xl font-extrabold text-white">0</div>
+        <div class="text-[11px] text-slate-300">Awaiting admin verification</div>
+      </div>
+
+      <div class="bg-[#1E3E62] border border-slate-700/80 rounded-2xl p-5 space-y-2 shadow-xl">
+        <div class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Approved Proofs</div>
+        <div id="statApproved" class="text-3xl font-extrabold text-white">0</div>
+        <div class="text-[11px] text-slate-300">Validated recycling records</div>
+      </div>
+
+      <div class="bg-[#1E3E62] border border-slate-700/80 rounded-2xl p-5 space-y-2 shadow-xl">
+        <div class="text-xs font-bold text-rose-400 uppercase tracking-wider">Rejected Submissions</div>
+        <div id="statRejected" class="text-3xl font-extrabold text-white">0</div>
+        <div class="text-[11px] text-slate-300">Did not meet criteria</div>
+      </div>
+    </div>
+
+    <!-- SUBMISSIONS MANAGEMENT SECTION -->
+    <div class="bg-[#1E3E62] border border-slate-700/80 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-700/80 pb-6">
+        <div>
+          <div class="text-xs font-bold text-[#D4AF37] uppercase tracking-widest">Research Management</div>
+          <h3 class="text-2xl font-bold font-serif-heading text-white">Submitted Participation Evidence</h3>
+          <p class="text-xs text-slate-300 mt-1">Review student proof photos, verify details, and approve or reject submissions.</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <button onclick="exportCSV()" class="px-4 py-2.5 bg-[#0B192C] hover:bg-slate-800 border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-xs rounded-xl transition-all flex items-center gap-2">
+            <i data-lucide="download" class="w-4 h-4"></i> Export CSV Data
+          </button>
+          <button onclick="loadSubmissions(); showToast('Dashboard data refreshed!');" class="px-4 py-2.5 bg-[#D4AF37] hover:bg-[#B8962E] text-[#0B192C] font-bold text-xs rounded-xl transition-all flex items-center gap-2">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i> Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <input type="text" id="adminSearchInput" oninput="renderAdminTable()" placeholder="Search by Student Name..." class="bg-[#0B192C] border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#D4AF37]">
+        <select id="adminStatusFilter" onchange="renderAdminTable()" class="bg-[#0B192C] border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#D4AF37]">
+          <option value="All">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="Approved">Approved</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+        <button onclick="clearAllData()" class="px-4 py-2.5 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/40 text-rose-300 text-xs font-bold rounded-xl transition-all">
+          Clear All Submissions
+        </button>
+      </div>
+
+      <!-- RESPONSIVE SUBMISSIONS CONTAINER -->
+      <div id="admin-submissions-container" class="space-y-4">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- EMPTY STATE -->
+      <div id="admin-empty" class="hidden text-center py-12 bg-[#0B192C]/50 rounded-2xl border border-dashed border-slate-700 p-8 space-y-2">
+        <i data-lucide="inbox" class="w-12 h-12 text-slate-500 mx-auto"></i>
+        <h4 class="text-slate-300 font-semibold">No Submissions Found</h4>
+        <p class="text-xs text-slate-400">Student participation proofs submitted on the Public Student Portal will appear here instantly.</p>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-[#0B192C] border-t border-slate-800 py-6 text-center text-xs text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 space-y-2">
+      <p class="font-semibold text-slate-300">Gabaldon Vocational Agriculture High School • Senior High School Students Researcher</p>
+      <p class="text-slate-500">Basura Mo, Points Mo (BMPM) Admin Research Portal &copy; 2026</p>
+    </div>
+  </footer>
+
+  <script>
+    const STORAGE_KEY = 'BMPM_RESEARCH_SUBMISSIONS_V1';
+    let submissions = [];
+
+    window.onload = function() {
+      lucide.createIcons();
+      checkAuthSession();
+      loadSubmissions();
+    };
+
+    function checkAuthSession() {
+      const isAuth = sessionStorage.getItem('BMPM_ADMIN_AUTH');
+      if(isAuth === 'true') {
+        document.getElementById('auth-modal').classList.add('hidden');
+      } else {
+        document.getElementById('auth-modal').classList.remove('hidden');
+      }
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const val = document.getElementById('passcodeInput').value.trim();
+      if(val === 'admin123') {
+        sessionStorage.setItem('BMPM_ADMIN_AUTH', 'true');
+        document.getElementById('auth-modal').classList.add('hidden');
+        showToast("Admin access granted!");
+        loadSubmissions();
+      } else {
+        document.getElementById('auth-error').classList.remove('hidden');
+      }
+    }
+
+    function handleAdminLogout() {
+      sessionStorage.removeItem('BMPM_ADMIN_AUTH');
+      document.getElementById('auth-modal').classList.remove('hidden');
+      document.getElementById('passcodeInput').value = '';
+    }
+
+    function loadSubmissions() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if(stored) {
+        try { submissions = JSON.parse(stored); } catch(e) { submissions = []; }
+      } else {
+        submissions = [];
+      }
+      renderAdminTable();
+      updateStats();
+    }
+
+    function saveSubmissions() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(submissions));
+      renderAdminTable();
+      updateStats();
+    }
+
+    function updateStats() {
+      const total = submissions.length;
+      const pending = submissions.filter(s => s.status === 'Pending').length;
+      const approved = submissions.filter(s => s.status === 'Approved').length;
+      const rejected = submissions.filter(s => s.status === 'Rejected').length;
+
+      document.getElementById('statTotal').textContent = total;
+      document.getElementById('statPending').textContent = pending;
+      document.getElementById('statApproved').textContent = approved;
+      document.getElementById('statRejected').textContent = rejected;
+    }
+
+    function renderAdminTable() {
+      const query = document.getElementById('adminSearchInput').value.trim().toLowerCase();
+      const statusFilter = document.getElementById('adminStatusFilter').value;
+      const container = document.getElementById('admin-submissions-container');
+      const emptyState = document.getElementById('admin-empty');
+
+      container.innerHTML = '';
+
+      const filtered = submissions.filter(item => {
+        const matchesQuery = item.name.toLowerCase().includes(query) || item.section.toLowerCase().includes(query);
+        const matchesStatus = statusFilter === 'All' || item.status === statusFilter;
+        return matchesQuery && matchesStatus;
+      });
+
+      if(filtered.length === 0) {
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+
+      filtered.forEach(item => {
+        const card = document.createElement('div');
+        card.className = "bg-[#0B192C] border border-slate-700/80 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg";
+        card.innerHTML = `
+          <div class="flex items-start sm:items-center gap-4 w-full md:w-auto">
+            <div class="relative w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 bg-[#1E3E62] rounded-xl overflow-hidden border border-slate-700 cursor-pointer" onclick="openImageModal('${item.photo}', '${item.name}')">
+              <img src="${item.photo}" class="w-full h-full object-cover">
+              <div class="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[11px] font-bold">
+                View Full
+              </div>
+            </div>
+
+            <div class="space-y-1.5 flex-grow">
+              <div class="flex flex-wrap items-center gap-2">
+                <h4 class="text-base font-bold text-white">${item.name}</h4>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                  item.status === 'Approved' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' :
+                  item.status === 'Rejected' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30' :
+                  'bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30'
+                }">${item.status}</span>
+              </div>
+              <p class="text-xs text-[#D4AF37] font-semibold"><i data-lucide="graduation-cap" class="w-3.5 h-3.5 inline mr-1"></i>${item.section}</p>
+              <p class="text-xs text-slate-300 bg-[#1E3E62]/60 p-2 rounded-lg border border-slate-800"><strong class="text-white">Remarks:</strong> ${item.notes || 'No extra remarks provided.'}</p>
+              <div class="text-[11px] text-slate-400 flex items-center gap-2 pt-1">
+                <span><i data-lucide="clock" class="w-3 h-3 inline mr-1"></i>${item.timestamp}</span>
+                <span>•</span>
+                <button onclick="openImageModal('${item.photo}', '${item.name}')" class="text-[#D4AF37] underline hover:text-white font-medium">Inspect Image Proof</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 w-full md:w-auto justify-end border-t md:border-t-0 pt-3 md:pt-0 border-slate-800">
+            <button onclick="updateStatus('${item.id}', 'Approved')" class="px-3.5 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 font-bold text-xs transition-all flex items-center gap-1">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i> Approve
+            </button>
+            <button onclick="updateStatus('${item.id}', 'Rejected')" class="px-3.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/40 text-rose-400 font-bold text-xs transition-all flex items-center gap-1">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i> Reject
+            </button>
+            <button onclick="deleteSubmission('${item.id}')" class="p-2 rounded-xl bg-slate-800 hover:bg-rose-900/40 border border-slate-700 text-slate-400 hover:text-rose-300 transition-all">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      lucide.createIcons();
+    }
+
+    function updateStatus(id, newStatus) {
+      submissions = submissions.map(item => {
+        if(item.id === id) item.status = newStatus;
+        return item;
+      });
+      saveSubmissions();
+      showToast(`Submission marked as ${newStatus}!`);
+    }
+
+    function deleteSubmission(id) {
+      if(confirm('Are you sure you want to delete this submission?')) {
+        submissions = submissions.filter(item => item.id !== id);
+        saveSubmissions();
+        showToast("Submission deleted.");
+      }
+    }
+
+    function clearAllData() {
+      if(confirm('WARNING: This will delete all student submissions stored in the browser. Continue?')) {
+        submissions = [];
+        saveSubmissions();
+        showToast("All submissions cleared.");
+      }
+    }
+
+    function openImageModal(photoSrc, studentName) {
+      document.getElementById('modalImage').src = photoSrc;
+      document.getElementById('modalStudentTitle').textContent = `Evidence Proof - ${studentName}`;
+      document.getElementById('imageModal').classList.remove('hidden');
+    }
+
+    function closeImageModal() {
+      document.getElementById('imageModal').classList.add('hidden');
+    }
+
+    function exportCSV() {
+      if(submissions.length === 0) {
+        showToast("No submissions to export.");
+        return;
+      }
+      let csv = "ID,Student Name,Grade & Section,Remarks,Timestamp,Status\n";
+      submissions.forEach(s => {
+        csv += `"${s.id}","${s.name}","${s.section}","${(s.notes || '').replace(/"/g, '""')}","${s.timestamp}","${s.status}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `BMPM_Research_Submissions_${Date.now()}.csv`;
+      a.click();
+      showToast("CSV Data Exported Successfully!");
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').textContent = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 3000);
+    }
+  </script>
+</body>
+</html>

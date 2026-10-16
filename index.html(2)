@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#0B192C] text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Basura Mo, Points Mo (BMPM) - Public Student Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bmpmNavy: '#0B192C',
+            bmpmCard: '#1E3E62',
+            bmpmDarkCard: '#000814',
+            bmpmGold: '#D4AF37',
+            bmpmGoldBright: '#F39C12',
+            bmpmGoldHover: '#B8962E',
+            bmpmAccent: '#10B981'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['Georgia', 'serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap');
+    body { font-family: 'Inter', sans-serif; background-color: #0B192C; }
+    .font-serif-heading { font-family: 'Playfair Display', Georgia, serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #1E3E62; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 4px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-100 antialiased selection:bg-[#D4AF37] selection:text-[#0B192C]">
+
+  <!-- HEADER WITH ONLY ONE LOGO (BMPM CIRCULAR LOGO) -->
+  <header class="sticky top-0 z-40 bg-[#0B192C]/95 backdrop-blur border-b border-[#D4AF37]/25 shadow-2xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row items-center justify-between gap-4">
+      
+      <!-- SINGLE LOGO & BRANDING -->
+      <div class="flex items-center space-x-3.5 text-center md:text-left">
+        <!-- ONLY BMPM CIRCULAR EMBLEM -->
+        <div class="relative w-12 h-12 flex-shrink-0 bg-[#1E3E62] rounded-full p-1 border-2 border-[#D4AF37] shadow-lg shadow-[#D4AF37]/10">
+          <svg viewBox="0 0 200 200" class="w-full h-full">
+            <circle cx="100" cy="100" r="92" fill="#0B192C" stroke="#D4AF37" stroke-width="8"/>
+            <circle cx="100" cy="100" r="76" fill="none" stroke="#10B981" stroke-width="5" stroke-dasharray="10 5"/>
+            <!-- Recycle Arrow & Leaf / B & P Curve -->
+            <path d="M55,105 C55,75 80,55 110,55 C135,55 155,70 155,95 C155,115 135,125 115,125 M55,105 L55,145 M55,105 C55,125 75,145 100,145 C125,145 145,125 145,105" stroke="#F39C12" stroke-width="12" fill="none" stroke-linecap="round"/>
+            <polygon points="120,45 140,55 120,65" fill="#F39C12"/>
+            <text x="100" y="102" font-family="Arial, sans-serif" font-weight="900" font-size="28" fill="#FFFFFF" text-anchor="middle">BMPM</text>
+          </svg>
+        </div>
+
+        <div>
+          <h1 class="text-base sm:text-lg font-extrabold tracking-tight text-white font-serif-heading">
+            BASURA MO, POINTS MO <span class="text-[#D4AF37] font-sans text-sm sm:text-base">(BMPM)</span>
+          </h1>
+          <p class="text-xs text-[#D4AF37]/90 font-medium">
+            Gabaldon Vocational Agriculture High School • <span class="text-slate-300">Senior High School Students Researcher</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- NAVIGATION TABS -->
+      <nav class="flex items-center gap-1.5 bg-[#1E3E62]/90 p-1.5 rounded-xl border border-slate-700/80 w-full md:w-auto justify-center">
+        <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all">
+          <i data-lucide="home" class="w-4 h-4"></i> Home
+        </button>
+        <button onclick="switchTab('submit')" id="nav-submit" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all">
+          <i data-lucide="upload-cloud" class="w-4 h-4"></i> Submit Proof
+        </button>
+        <button onclick="switchTab('portfolio')" id="nav-portfolio" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all">
+          <i data-lucide="folder" class="w-4 h-4"></i> Student Portfolio
+        </button>
+      </nav>
+
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+
+    <!-- Notification Toast -->
+    <div id="toast" class="hidden fixed top-20 right-4 z-50 max-w-md bg-[#D4AF37] text-[#0B192C] px-5 py-3.5 rounded-xl shadow-2xl flex items-center gap-3 font-bold text-sm border-2 border-white animate-bounce">
+      <i data-lucide="check-circle" class="w-5 h-5 flex-shrink-0"></i>
+      <span id="toast-message">Action processed successfully!</span>
+    </div>
+
+    <!-- ==================== SECTION 1: HOME PAGE ==================== -->
+    <section id="tab-home" class="tab-content space-y-10">
+      
+      <!-- HERO BANNER -->
+      <div class="relative overflow-hidden rounded-3xl bg-gradient-to-b from-[#1E3E62] via-[#1E3E62]/90 to-[#0B192C] border border-[#D4AF37]/30 shadow-2xl p-6 sm:p-12 text-center">
+        <div class="relative z-10 max-w-3xl mx-auto space-y-6">
+          
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0B192C]/90 border border-[#D4AF37]/40 text-[#D4AF37] text-xs sm:text-sm font-semibold tracking-wider uppercase">
+            <i data-lucide="award" class="w-4 h-4"></i> ACTION RESEARCH PROJECT • SENIOR HIGH SCHOOL
+          </div>
+
+          <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white font-serif-heading leading-tight">
+            Basura Mo, Points Mo <br class="hidden sm:block"/>
+            <span class="text-[#D4AF37] font-sans">(BMPM)</span>
+          </h2>
+
+          <p class="text-sm sm:text-base text-slate-300 font-normal leading-relaxed max-w-2xl mx-auto">
+            Official Participation Portal for Gabaldon Vocational Agriculture High School students. Submit proof of recycling and complete your 10-evidence portfolio!
+          </p>
+
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+            <button onclick="switchTab('submit')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-[#D4AF37] hover:bg-[#B8962E] text-[#0B192C] font-extrabold text-base shadow-xl transition-all">
+              <i data-lucide="upload" class="w-5 h-5"></i> Submit Participation Evidence
+            </button>
+            <button onclick="switchTab('portfolio')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-[#0B192C] hover:bg-[#1E3E62] border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-base transition-all">
+              <i data-lucide="folder-open" class="w-5 h-5"></i> View Student Portfolio
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- HOW THE SAMPLING RESEARCH WORKS -->
+      <div class="bg-[#1E3E62]/80 border border-slate-700/80 rounded-3xl p-6 sm:p-10 space-y-8 shadow-xl">
+        <div class="text-center max-w-2xl mx-auto space-y-2">
+          <div class="text-xs font-bold text-[#D4AF37] uppercase tracking-widest">Research Methodology</div>
+          <h3 class="text-2xl sm:text-3xl font-bold font-serif-heading text-white">How The Sampling Research Works</h3>
+          <p class="text-sm text-slate-300">Simple 4-step process for Senior High School participants to log their recyclable waste evidence.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="bg-[#0B192C]/90 p-6 rounded-2xl border border-slate-800 space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37] font-bold text-lg">1</div>
+            <h4 class="font-bold text-white text-base">Collect & Segregate</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">Gather plastic bottles, paper, cans, or metal waste from campus or household surroundings.</p>
+          </div>
+
+          <div class="bg-[#0B192C]/90 p-6 rounded-2xl border border-slate-800 space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37] font-bold text-lg">2</div>
+            <h4 class="font-bold text-white text-base">Capture Photo Proof</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">Take a clear photograph showing the collected material as concrete research evidence.</p>
+          </div>
+
+          <div class="bg-[#0B192C]/90 p-6 rounded-2xl border border-slate-800 space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37] font-bold text-lg">3</div>
+            <h4 class="font-bold text-white text-base">Submit Evidence</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">Fill out your Full Name, Grade & Section, and attach your photo proof.</p>
+          </div>
+
+          <div class="bg-[#0B192C]/90 p-6 rounded-2xl border border-slate-800 space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37] font-bold text-lg">4</div>
+            <h4 class="font-bold text-white text-base">10-Evidence Goal</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">Track your personal progress bar in the Student Portfolio until all 10 evidence slots are completed!</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==================== SECTION 2: SUBMIT PROOF FORM ==================== -->
+    <section id="tab-submit" class="tab-content hidden max-w-2xl mx-auto">
+      <div class="bg-[#1E3E62] border border-slate-700/80 rounded-3xl p-6 sm:p-10 shadow-2xl space-y-6">
+        <div class="border-b border-slate-700/80 pb-4">
+          <div class="inline-flex items-center gap-2 text-[#D4AF37] text-xs font-bold uppercase tracking-wider mb-1">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> New Participation Record
+          </div>
+          <h3 class="text-2xl font-bold font-serif-heading text-white">Submit Participation Evidence</h3>
+          <p class="text-xs text-slate-300 mt-1">Provide complete and accurate details to log your recycling evidence.</p>
+        </div>
+
+        <form id="submission-form" onsubmit="handleStudentFormSubmit(event)" class="space-y-5">
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="space-y-1">
+              <label class="text-xs font-semibold text-slate-200">Student Full Name *</label>
+              <input type="text" id="studentName" required placeholder="e.g. Juan Dela Cruz" class="w-full bg-[#0B192C] border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37]">
+            </div>
+
+            <div class="space-y-1">
+              <label class="text-xs font-semibold text-slate-200">Grade & Section *</label>
+              <input type="text" id="gradeSection" required placeholder="e.g. Grade 11 - Mt. Caraballo" class="w-full bg-[#0B192C] border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37]">
+            </div>
+          </div>
+
+          <!-- PHOTO ATTACHMENT -->
+          <div class="space-y-1">
+            <label class="text-xs font-semibold text-slate-200">Attach Photo Proof *</label>
+            <div class="border-2 border-dashed border-slate-700 hover:border-[#D4AF37] bg-[#0B192C] rounded-2xl p-6 text-center transition-all cursor-pointer" onclick="document.getElementById('photoInput').click()">
+              <input type="file" id="photoInput" accept="image/*" class="hidden" onchange="previewPhoto(event)">
+              <div id="upload-placeholder" class="space-y-2">
+                <i data-lucide="image-plus" class="w-10 h-10 text-[#D4AF37] mx-auto"></i>
+                <div class="text-xs text-slate-300 font-medium">Click to upload image proof from device</div>
+              </div>
+              <div id="upload-preview-container" class="hidden">
+                <img id="upload-preview" src="" class="max-h-48 mx-auto rounded-xl border border-slate-700">
+                <span class="mt-2 text-xs text-emerald-400 block font-medium">Photo Attached Successfully ✓</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-xs font-semibold text-slate-200">Additional Remarks / Notes (Optional)</label>
+            <textarea id="submissionNotes" rows="2" placeholder="e.g. Turned over to school materials recovery bin" class="w-full bg-[#0B192C] border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#D4AF37]"></textarea>
+          </div>
+
+          <button type="submit" class="w-full py-4 rounded-xl bg-[#D4AF37] hover:bg-[#B8962E] text-[#0B192C] font-extrabold text-base shadow-xl transition-all flex items-center justify-center gap-2">
+            <i data-lucide="send" class="w-5 h-5"></i> Submit Evidence
+          </button>
+
+        </form>
+      </div>
+    </section>
+
+    <!-- ==================== SECTION 3: STUDENT PORTFOLIO ==================== -->
+    <section id="tab-portfolio" class="tab-content hidden space-y-8">
+      
+      <div class="bg-[#1E3E62] border border-slate-700/80 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div class="text-xs font-bold text-[#D4AF37] uppercase tracking-widest">Evidence Tracking</div>
+            <h3 class="text-2xl font-bold font-serif-heading text-white">Student Evidence Portfolio</h3>
+            <p class="text-xs text-slate-300 mt-1">Search your Name to load your 10-evidence completion progress bar.</p>
+          </div>
+
+          <div class="flex items-center gap-2 w-full md:w-auto">
+            <input type="text" id="portfolioSearchInput" placeholder="Enter Full Name..." class="bg-[#0B192C] border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#D4AF37] w-full md:w-64">
+            <button onclick="renderStudentPortfolio()" class="px-5 py-2.5 bg-[#D4AF37] hover:bg-[#B8962E] text-[#0B192C] font-extrabold text-sm rounded-xl transition-all flex-shrink-0">
+              Search
+            </button>
+          </div>
+        </div>
+
+        <!-- 10-EVIDENCE PROGRESS BAR CONTAINER -->
+        <div id="portfolio-summary" class="hidden bg-[#0B192C] rounded-2xl p-6 border border-slate-800 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+            <div>
+              <h4 id="portfolioStudentName" class="text-xl font-bold text-white">--</h4>
+              <p id="portfolioStudentMeta" class="text-xs text-slate-400">--</p>
+            </div>
+            <div id="portfolioCountBadge" class="text-xs font-bold text-[#D4AF37] bg-[#D4AF37]/10 px-3 py-1 rounded-full border border-[#D4AF37]/30">
+              0 Evidence Submitted
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-xs font-semibold">
+              <span class="text-slate-300">10-Evidence Goal Progress</span>
+              <span id="portfolioProgressText" class="text-[#D4AF37]">0 / 10 Completed</span>
+            </div>
+            <div class="w-full bg-slate-800 h-3.5 rounded-full overflow-hidden p-0.5 border border-slate-700">
+              <div id="portfolioProgressBar" class="bg-gradient-to-r from-[#D4AF37] to-emerald-400 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PORTFOLIO GRID -->
+      <div id="portfolio-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+
+      <!-- EMPTY STATE -->
+      <div id="portfolio-empty" class="text-center py-12 bg-[#1E3E62]/40 rounded-3xl border border-dashed border-slate-700 p-8 space-y-2">
+        <i data-lucide="folder-search" class="w-12 h-12 text-slate-500 mx-auto"></i>
+        <h4 class="text-slate-300 font-semibold">No Submissions Displayed</h4>
+        <p class="text-xs text-slate-400">Enter your Student Name in the search box above to view your progress and uploaded proofs.</p>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-[#0B192C] border-t border-slate-800 py-6 text-center text-xs text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 space-y-2">
+      <p class="font-semibold text-slate-300">Gabaldon Vocational Agriculture High School • Senior High School Students Researcher</p>
+      <p class="text-slate-500">Basura Mo, Points Mo (BMPM) Public Participation Portal &copy; 2026</p>
+    </div>
+  </footer>
+
+  <script>
+    // SHARED LOCAL STORAGE KEY FOR DATA SYNC WITH SEPARATE ADMIN WEBSITE
+    const STORAGE_KEY = 'BMPM_RESEARCH_SUBMISSIONS_V1';
+    let submissions = [];
+    let currentPhotoBase64 = '';
+
+    window.onload = function() {
+      lucide.createIcons();
+      loadSubmissions();
+      switchTab('home');
+    };
+
+    function loadSubmissions() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if(stored) {
+        try { submissions = JSON.parse(stored); } catch(e) { submissions = []; }
+      }
+    }
+
+    function saveSubmissions() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(submissions));
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+      setActiveNav(tabId);
+      if(tabId === 'portfolio') renderStudentPortfolio();
+    }
+
+    function setActiveNav(tabId) {
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-[#D4AF37]', 'text-[#0B192C]');
+        btn.classList.add('text-slate-300');
+      });
+      const active = document.getElementById(`nav-${tabId}`);
+      if(active) {
+        active.classList.add('bg-[#D4AF37]', 'text-[#0B192C]');
+        active.classList.remove('text-slate-300');
+      }
+    }
+
+    function previewPhoto(event) {
+      const file = event.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        currentPhotoBase64 = e.target.result;
+        document.getElementById('upload-preview').src = currentPhotoBase64;
+        document.getElementById('upload-placeholder').classList.add('hidden');
+        document.getElementById('upload-preview-container').classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleStudentFormSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('studentName').value.trim();
+      const section = document.getElementById('gradeSection').value.trim();
+      const notes = document.getElementById('submissionNotes').value.trim();
+
+      if(!currentPhotoBase64) {
+        showToast("Please attach a photo proof.");
+        return;
+      }
+
+      loadSubmissions(); // Refresh latest state
+
+      const newEntry = {
+        id: 'bmpm-' + Date.now(),
+        name,
+        section,
+        notes,
+        photo: currentPhotoBase64,
+        timestamp: new Date().toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' }),
+        status: 'Pending'
+      };
+
+      submissions.unshift(newEntry);
+      saveSubmissions();
+
+      document.getElementById('submission-form').reset();
+      document.getElementById('upload-placeholder').classList.remove('hidden');
+      document.getElementById('upload-preview-container').classList.add('hidden');
+      currentPhotoBase64 = '';
+
+      showToast("Evidence Submitted Successfully!");
+      document.getElementById('portfolioSearchInput').value = name;
+      setTimeout(() => switchTab('portfolio'), 1000);
+    }
+
+    function renderStudentPortfolio() {
+      loadSubmissions();
+      const query = document.getElementById('portfolioSearchInput').value.trim().toLowerCase();
+      const summaryBox = document.getElementById('portfolio-summary');
+      const grid = document.getElementById('portfolio-grid');
+      const emptyState = document.getElementById('portfolio-empty');
+
+      grid.innerHTML = '';
+
+      if(!query) {
+        summaryBox.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      const matches = submissions.filter(s => 
+        s.name.toLowerCase().includes(query) || s.section.toLowerCase().includes(query)
+      );
+
+      if(matches.length === 0) {
+        summaryBox.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      summaryBox.classList.remove('hidden');
+
+      const student = matches[0];
+      const count = matches.length;
+      const pct = Math.min(Math.round((count / 10) * 100), 100);
+
+      document.getElementById('portfolioStudentName').textContent = student.name;
+      document.getElementById('portfolioStudentMeta').textContent = student.section;
+      document.getElementById('portfolioCountBadge').textContent = `${count} Evidence Submitted`;
+      document.getElementById('portfolioProgressText').textContent = `${count} / 10 Completed`;
+      document.getElementById('portfolioProgressBar').style.width = `${pct}%`;
+
+      matches.forEach(item => {
+        const card = document.createElement('div');
+        card.className = "bg-[#1E3E62] border border-slate-700/80 rounded-2xl p-4 space-y-3 flex flex-col justify-between shadow-lg";
+        card.innerHTML = `
+          <div class="space-y-2">
+            <div class="h-44 rounded-xl overflow-hidden bg-[#0B192C] border border-slate-800">
+              <img src="${item.photo}" class="w-full h-full object-cover">
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed">${item.notes || 'No extra remarks provided.'}</p>
+          </div>
+          <div class="border-t border-slate-700/80 pt-2.5 flex justify-between items-center text-[11px] text-slate-400">
+            <span>${item.timestamp}</span>
+            <span class="px-2.5 py-0.5 rounded-full font-bold text-[10px] ${
+              item.status === 'Approved' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' :
+              item.status === 'Rejected' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30' :
+              'bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30'
+            }">${item.status}</span>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      lucide.createIcons();
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').textContent = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 3000);
+    }
+  </script>
+</body>
+</html>
